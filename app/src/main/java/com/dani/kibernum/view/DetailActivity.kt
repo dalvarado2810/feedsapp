@@ -5,6 +5,7 @@ import android.text.Html
 import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.dani.kibernum.R
+import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.model.FeedsItem
 import kotlinx.android.synthetic.main.kibernum_detail_activity.*
 
@@ -25,6 +26,6 @@ class DetailActivity: AppCompatActivity() {
             placeholder(R.drawable.image)
         }
         tv_published.text = feed.published
-        tv_author.text = feed.author_id
+        tv_author.text = feed.author_id.toString()
     }
 }

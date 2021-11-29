@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import com.dani.kibernum.data.db.AppDao
 import com.dani.kibernum.data.db.AppDatabase
+import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.repository.HomeRepository
 import com.dani.kibernum.data.repository.LoginRepository
-import com.dani.kibernum.data.repository.source.ApiFeeds
 import com.dani.kibernum.data.repository.source.MyPreference
 import com.dani.kibernum.data.repository.source.RemoteApiSource
 import com.google.gson.Gson
@@ -59,6 +59,10 @@ class AppModule {
     fun getAppDao(appDatabase: AppDatabase): AppDao = appDatabase.getAppDao()
 
     @Provides
+    @Singleton
+    fun getContactDao(appDatabase: AppDatabase): ContactsDao = appDatabase.getContactDao()
+
+    @Provides
     fun provideLoginRepository(
         remoteApiSource: RemoteApiSource,
         myPreference: MyPreference
@@ -66,8 +70,8 @@ class AppModule {
         LoginRepository(remoteApiSource, myPreference)
 
     @Provides
-    fun provideHomeRepository(appDao: AppDao, remoteApiSource: RemoteApiSource,
+    fun provideHomeRepository(appDao: AppDao, contactsDao: ContactsDao, remoteApiSource: RemoteApiSource,
                               myPreference: MyPreference): HomeRepository =
-        HomeRepository(remoteApiSource, appDao, myPreference)
+        HomeRepository(remoteApiSource, appDao, contactsDao, myPreference)
 }
 

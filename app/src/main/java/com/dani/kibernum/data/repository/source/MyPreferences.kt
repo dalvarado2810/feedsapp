@@ -10,7 +10,7 @@ class MyPreference(
         const val PREF_TAG = "kibernum"
     }
 
-    private val prefs = PreferenceManager.getDefaultSharedPreferences(context,)
+    private val prefs = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun getStoredAuthToken(): String {
         return prefs.getString(PREF_TAG, "")!!

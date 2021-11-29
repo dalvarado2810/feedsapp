@@ -1,27 +1,25 @@
 package com.dani.kibernum.view.adapter
 
+import android.graphics.Color
 import android.os.Build
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.dani.kibernum.R
+import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FeedsItem
+import com.dani.kibernum.view.FavoriteFeed
 import com.dani.kibernum.view.FeedsCallback
+import com.dani.kibernum.view.adapter.diffutil.FeedsDiffUtil
 import kotlinx.android.synthetic.main.kibernum_feed_item.view.*
 
-class FeedListAdapter(val callback: FeedsCallback) :
-    RecyclerView.Adapter<FeedListAdapter.FeedViewHolder>() {
-
-    private var listData : List<FeedsItem>? = null
-
-    fun setListData(listData : List<FeedsItem>?){
-        this.listData = listData
-        notifyDataSetChanged()
-    }
+class FeedListAdapter(val callback: FeedsCallback, val fav : FavoriteFeed) :
+    ListAdapter<FeedsItem, FeedListAdapter.FeedViewHolder>(FeedsDiffUtil){
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -36,13 +34,9 @@ class FeedListAdapter(val callback: FeedsCallback) :
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        holder.bind(listData?.get(position)!!)
+        holder.bind(getItem(position)!!)
     }
 
-    override fun getItemCount(): Int {
-        if(listData == null) return 0
-        return listData?.size!!
-    }
 
     inner class FeedViewHolder(
         view: View
@@ -52,10 +46,11 @@ class FeedListAdapter(val callback: FeedsCallback) :
         private val tittleFeed = view.tv_tittle
         private val descFeed = view.tv_desc
         private val authorFeed = view.nametv
+        private val favclick = view.favBtn
 
         @RequiresApi(Build.VERSION_CODES.N)
         fun bind(feed : FeedsItem) {
-            authorFeed.text = feed.author_id
+            authorFeed.text = feed.firstName
             tittleFeed.text = feed.title
             descFeed.text = Html.fromHtml(feed.description, Html.FROM_HTML_MODE_COMPACT)
             imageFeed.load(feed.image){
@@ -65,6 +60,10 @@ class FeedListAdapter(val callback: FeedsCallback) :
             imageFeed.setOnClickListener {
                 callback.onFeedClicked(feed)
             }
+            favclick.setOnClickListener {
+                favclick.setBackgroundColor(Color.RED)
+            }
+
 
         }
 

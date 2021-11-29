@@ -1,12 +1,10 @@
 package com.dani.kibernum.data.db
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FeedsItem
-
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 
 
 @Dao
@@ -20,7 +18,5 @@ interface AppDao {
 
     @Query("DELETE FROM feeds")
     fun deleteAllRecords()
-
-
 
 }
