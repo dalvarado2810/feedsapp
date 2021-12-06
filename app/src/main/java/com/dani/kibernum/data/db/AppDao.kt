@@ -19,4 +19,5 @@ interface AppDao {
     @Query("DELETE FROM feeds")
     fun deleteAllRecords()
 
+
 }

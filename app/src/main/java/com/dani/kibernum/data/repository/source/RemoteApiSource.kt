@@ -14,7 +14,7 @@ interface RemoteApiSource {
     fun doLogin(@Body login: LoginDTO): Call<LoginResponse>
 
     @POST("api/favorite")
-    fun markAsFavorite(@Header("apikey") apikey: String, @Body favorite: FavoriteDto): Call<LoginResponse>
+    fun markAsFavorite(@Header("apikey") apikey: String, @Body favorite: FavoriteDto): Call<FavoriteResponse>
 
     @GET("api/feed")
     fun getApiFeeds(@Header("apikey") apiKey: String): Call<List<FeedsItem>>

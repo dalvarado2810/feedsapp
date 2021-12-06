@@ -12,6 +12,7 @@ import androidx.annotation.NonNull
 import com.dani.kibernum.R
 import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.model.ContactsItem
+import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
 import com.dani.kibernum.view.adapter.FeedListAdapter
 import com.dani.kibernum.view.utils.action
@@ -22,12 +23,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.kibernum_activity_home.*
+import kotlinx.android.synthetic.main.kibernum_detail_activity.*
 
 @AndroidEntryPoint
-class HomeActivity : AppCompatActivity(), FeedsCallback, FavoriteFeed {
+class HomeActivity : AppCompatActivity(), FeedsCallback {
 
-    private val rvAdapter: FeedListAdapter = FeedListAdapter(this, this)
+    private val rvAdapter: FeedListAdapter = FeedListAdapter(this)
     val viewModel: HomeViewModel by viewModels()
+    var favoriteFeeds : List<FavouriteFeeds> = emptyList()
+
 
     private val navigatemenu = BottomNavigationView.OnNavigationItemSelectedListener {
             item ->
@@ -52,7 +56,7 @@ class HomeActivity : AppCompatActivity(), FeedsCallback, FavoriteFeed {
 
         initRecyclerView()
         bringFeeds()
-
+        bringFavourites()
 
         val navigationBar = findViewById<BottomNavigationView>(
             R.id.navigationmenu)
@@ -65,11 +69,9 @@ class HomeActivity : AppCompatActivity(), FeedsCallback, FavoriteFeed {
         recyclerview.adapter = rvAdapter
     }
 
-
     private fun bringFeeds() {
         viewModel.getAllRepositoryList().observe(this,::onResponse)
         viewModel.getAllContactsList().observe(this,::onResponseC)
-
     }
 
     private fun onResponse(resource: AppResource<List<FeedsItem>>) {
@@ -79,6 +81,8 @@ class HomeActivity : AppCompatActivity(), FeedsCallback, FavoriteFeed {
             is AppResource.Success -> showFeeds(resource.data)
         }
     }
+
+
 
     private fun onResponseC(resource: AppResource<List<ContactsItem>>) {
         when(resource) {
@@ -116,14 +120,45 @@ class HomeActivity : AppCompatActivity(), FeedsCallback, FavoriteFeed {
     }
 
     override fun onFeedClicked(feed: FeedsItem) {
+        val isfav = favouriteChecker(feed.id)
         startActivity(Intent(this, DetailActivity::class.java).apply {
-            putExtra("feed", feed)
+            putExtra("feed", feed).putExtra("isFavourite", isfav)
         })
+        finish()
     }
 
-    override fun onFavClicked(feed: FeedsItem){
+    //chequeo favoritos
+
+    private fun bringFavourites(){
+        viewModel.getAllFavouritesList().observe(this,::onResponseF)
+    }
+
+    private fun onResponseF(resource : AppResource<List<FavouriteFeeds>>){
+        when(resource) {
+            is AppResource.Error -> showMessage(resource.message)
+            is AppResource.Loading -> showLoading()
+            is AppResource.Success -> resource.data?.let { showFavs(it) }
+        }
+    }
+
+    private fun showFavs(data : List<FavouriteFeeds>){
+
+        favoriteFeeds = data
 
     }
+
+    fun favouriteChecker(id: Int?):Boolean{
+        var isFavourite : Boolean = false
+        favoriteFeeds.forEach { favoriteFeeds ->
+            when (id) {
+                favoriteFeeds.id -> isFavourite = true
+            }
+        }
+        return isFavourite
+    }
+
+
+
 }
 
 
@@ -132,8 +167,8 @@ interface FeedsCallback {
     fun onFeedClicked(feed: FeedsItem): Unit
 }
 
-interface FavoriteFeed {
+/*interface FavoriteFeed {
     fun onFavClicked(feed : FeedsItem): Unit
-}
+}*/
 
 

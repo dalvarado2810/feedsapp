@@ -19,6 +19,6 @@ interface ContactsDao {
 
     @Transaction
     @Query("SELECT * FROM contacts WHERE author = :author")
-    fun getContactsAndFeeds(author : Int): List<ContactsItem>
+    fun getContactsAndFeeds(author : String): List<ContactsItem>
 
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dani.kibernum.data.model.ContactsItem
+import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
 import com.dani.kibernum.data.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,14 @@ class HomeViewModel @Inject constructor (
         return liveData
     }
 
+    fun getAllFavouritesList(): LiveData<AppResource<List<FavouriteFeeds>>>{
+        val liveDataFav = MutableLiveData<AppResource<List<FavouriteFeeds>>>()
+        viewModelScope.launch(Dispatchers.IO) {
+            liveDataFav.postValue(repository?.getFavourites())
+        }
+        return liveDataFav
+    }
+
     fun getAllContactsList(): LiveData<AppResource<List<ContactsItem>>>{
         val liveDataC = MutableLiveData<AppResource<List<ContactsItem>>>()
         viewModelScope.launch(Dispatchers.IO) {
@@ -37,7 +46,17 @@ class HomeViewModel @Inject constructor (
 
     }
 
+    /*fun getContactsAndFeeds(author : String): LiveData<List<ContactsItem>> {
+        val liveDataCF = MutableLiveData<List<ContactsItem>>()
+        viewModelScope.launch(Dispatchers.IO) {
+            liveDataCF.postValue(repository.getContactsAndFeeds(author))
+        }
+        return liveDataCF
+    }
+*/
+    }
 
 
-}
+
+
 

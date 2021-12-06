@@ -1,6 +1,5 @@
 package com.dani.kibernum.view.adapter
 
-import android.graphics.Color
 import android.os.Build
 import android.text.Html
 import android.view.LayoutInflater
@@ -11,23 +10,24 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.dani.kibernum.R
-import com.dani.kibernum.data.model.ContactsItem
-import com.dani.kibernum.data.model.FeedsItem
-import com.dani.kibernum.view.FeedsCallback
-import com.dani.kibernum.view.adapter.diffutil.FeedsDiffUtil
+import com.dani.kibernum.data.model.FavouriteFeeds
+import com.dani.kibernum.view.adapter.diffutil.FavouritesDiffUtil
 import kotlinx.android.synthetic.main.kibernum_feed_item.view.*
 
-class FeedListAdapter(val callback: FeedsCallback) :
-    ListAdapter<FeedsItem, FeedListAdapter.FeedViewHolder>(FeedsDiffUtil){
+class FavouritesListAdapter() :
+    ListAdapter<FavouriteFeeds,
+            FavouritesListAdapter.FeedViewHolder>(
+            FavouritesDiffUtil){
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): FeedViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.kibernum_feed_item,
-            parent,
-            false)
+            .inflate(
+                R.layout.kibernum_favourites_item,
+                parent,
+                false)
 
         return FeedViewHolder(view)
     }
@@ -48,17 +48,15 @@ class FeedListAdapter(val callback: FeedsCallback) :
 
 
         @RequiresApi(Build.VERSION_CODES.N)
-        fun bind(feed : FeedsItem) {
-            authorFeed.text = feed.firstName
+        fun bind(feed : FavouriteFeeds) {
+            authorFeed.text = feed.author_id
             tittleFeed.text = feed.title
             descFeed.text = Html.fromHtml(feed.description, Html.FROM_HTML_MODE_COMPACT)
             imageFeed.load(feed.image){
                 crossfade(true)
                 placeholder(R.drawable.image)
             }
-            imageFeed.setOnClickListener {
-                callback.onFeedClicked(feed)
-            }
+
 
 
 

@@ -2,9 +2,12 @@ package com.dani.kibernum.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import com.dani.kibernum.data.db.AppDao
 import com.dani.kibernum.data.db.AppDatabase
 import com.dani.kibernum.data.db.ContactsDao
+import com.dani.kibernum.data.db.FavDao
+import com.dani.kibernum.data.repository.FavoriteRepository
 import com.dani.kibernum.data.repository.HomeRepository
 import com.dani.kibernum.data.repository.LoginRepository
 import com.dani.kibernum.data.repository.source.MyPreference
@@ -63,6 +66,10 @@ class AppModule {
     fun getContactDao(appDatabase: AppDatabase): ContactsDao = appDatabase.getContactDao()
 
     @Provides
+    @Singleton
+    fun getFavDao(appDatabase: AppDatabase): FavDao = appDatabase.getFavDao()
+
+    @Provides
     fun provideLoginRepository(
         remoteApiSource: RemoteApiSource,
         myPreference: MyPreference
@@ -70,8 +77,15 @@ class AppModule {
         LoginRepository(remoteApiSource, myPreference)
 
     @Provides
-    fun provideHomeRepository(appDao: AppDao, contactsDao: ContactsDao, remoteApiSource: RemoteApiSource,
+    fun provideHomeRepository(appDao: AppDao, contactsDao: ContactsDao, favDao: FavDao, remoteApiSource: RemoteApiSource,
                               myPreference: MyPreference): HomeRepository =
-        HomeRepository(remoteApiSource, appDao, contactsDao, myPreference)
-}
+        HomeRepository(remoteApiSource, appDao, contactsDao, favDao, myPreference)
 
+
+    @Provides
+    fun provideFavoriteRepository(remoteApiSource: RemoteApiSource,
+        sharedPreferences: MyPreference, favDao: FavDao):
+            FavoriteRepository =
+            FavoriteRepository(remoteApiSource, sharedPreferences, favDao)
+
+}

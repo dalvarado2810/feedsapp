@@ -6,11 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.dani.kibernum.data.model.ContactsItem
+import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
 import com.dani.kibernum.data.model.TypeConverterOwner
 
 
-@Database(entities = [FeedsItem::class, ContactsItem::class],
+@Database(entities = [FeedsItem::class, ContactsItem::class, FavouriteFeeds::class],
     version = 1,
     exportSchema = false)
 @TypeConverters(TypeConverterOwner::class)
@@ -18,6 +19,8 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun getAppDao(): AppDao
     abstract fun getContactDao(): ContactsDao
+    abstract fun getFavDao(): FavDao
+
 
 companion object {
     @Volatile

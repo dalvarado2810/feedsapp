@@ -2,9 +2,10 @@ package com.dani.kibernum.data.repository
 
 import com.dani.kibernum.data.db.AppDao
 import com.dani.kibernum.data.db.ContactsDao
+import com.dani.kibernum.data.db.FavDao
 import com.dani.kibernum.data.model.ContactsItem
+import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
-import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.data.repository.source.MyPreference
 import com.dani.kibernum.data.repository.source.RemoteApiSource
 import com.dani.kibernum.viewmodel.AppResource
@@ -16,6 +17,7 @@ class HomeRepository  @Inject constructor(
     private val apiFeeds: RemoteApiSource,
     private val appDao : AppDao,
     private val contactsDao: ContactsDao,
+    private val favDao : FavDao,
     private val sharedPreferences: MyPreference
 ) {
     fun getAllFeeds(): AppResource<List<FeedsItem>>{
@@ -66,6 +68,8 @@ class HomeRepository  @Inject constructor(
         }
     }
 
+
+
     private fun getFallbackData(): AppResource<List<FeedsItem>> {
 
         val feeds = appDao.getAllRecords()
@@ -94,6 +98,17 @@ class HomeRepository  @Inject constructor(
          } else {
                 AppResource.Error(message = "Network Error data")
          }
+    }
+
+    fun getFavourites(): AppResource<List<FavouriteFeeds>> {
+
+        val favourites = favDao.getAllFavourites()
+
+        return if (favourites.isNotEmpty()) {
+            AppResource.Success(favourites)
+        } else {
+            AppResource.Error(message = "There´s no Favourites")
+        }
     }
 
 }
