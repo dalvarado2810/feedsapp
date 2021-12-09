@@ -49,16 +49,13 @@ class FavouritesListAdapter() :
 
         @RequiresApi(Build.VERSION_CODES.N)
         fun bind(feed : FavouriteFeeds) {
-            authorFeed.text = feed.author_id
+            authorFeed.text = "${feed.firstName} , ${feed.lastName}"
             tittleFeed.text = feed.title
             descFeed.text = Html.fromHtml(feed.description, Html.FROM_HTML_MODE_COMPACT)
             imageFeed.load(feed.image){
                 crossfade(true)
                 placeholder(R.drawable.image)
             }
-
-
-
 
         }
 

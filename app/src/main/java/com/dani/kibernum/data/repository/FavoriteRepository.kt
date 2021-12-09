@@ -2,8 +2,10 @@ package com.dani.kibernum.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.db.FavDao
 import com.dani.kibernum.data.model.*
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.data.repository.source.MyPreference
 import com.dani.kibernum.data.repository.source.RemoteApiSource
 import com.dani.kibernum.viewmodel.AppResource
@@ -12,7 +14,8 @@ import javax.inject.Inject
 class FavoriteRepository @Inject constructor(
     private val remoteApiSource: RemoteApiSource,
     private val sharedPreferences: MyPreference,
-    private val favDao : FavDao
+    private val favDao : FavDao,
+    private val contactsDao: ContactsDao
 ) {
 
 
@@ -39,12 +42,16 @@ class FavoriteRepository @Inject constructor(
 
     private fun manageFavSuccessResponse(body: FavoriteResponse?): AppResource<FavoriteResponse?> {
 
-        return if(body?.status == "OK") {
-            //sharedPreferences.setStoredToken(body?.apiToket)
-            AppResource.Success(body)
+        return try {
+            if (body?.status == "OK") {
 
-        } else {
-            AppResource.Error("Not allowed to save favourite")
+                AppResource.Success(body)
+
+            } else {
+                AppResource.Error("Not allowed to save favourite")
+            }
+        } catch (e : Exception) {
+            AppResource.Error("Not connected")
         }
     }
 
@@ -66,5 +73,7 @@ class FavoriteRepository @Inject constructor(
             AppResource.Error(message = "There´s no Favourites")
         }
     }
+
+
 
 }

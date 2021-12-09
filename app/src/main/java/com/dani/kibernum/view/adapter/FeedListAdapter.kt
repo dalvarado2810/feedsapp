@@ -14,6 +14,7 @@ import com.dani.kibernum.R
 import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FeedsItem
 import com.dani.kibernum.view.FeedsCallback
+import com.dani.kibernum.view.HomeActivity
 import com.dani.kibernum.view.adapter.diffutil.FeedsDiffUtil
 import kotlinx.android.synthetic.main.kibernum_feed_item.view.*
 
@@ -49,7 +50,7 @@ class FeedListAdapter(val callback: FeedsCallback) :
 
         @RequiresApi(Build.VERSION_CODES.N)
         fun bind(feed : FeedsItem) {
-            authorFeed.text = feed.firstName
+
             tittleFeed.text = feed.title
             descFeed.text = Html.fromHtml(feed.description, Html.FROM_HTML_MODE_COMPACT)
             imageFeed.load(feed.image){
@@ -59,9 +60,6 @@ class FeedListAdapter(val callback: FeedsCallback) :
             imageFeed.setOnClickListener {
                 callback.onFeedClicked(feed)
             }
-
-
-
         }
 
     }

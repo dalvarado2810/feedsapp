@@ -12,5 +12,7 @@ data class FavouriteFeeds (
     @ColumnInfo(name = "description")val description: String?,
     @ColumnInfo(name = "image")val image: String?,
     @ColumnInfo(name = "date")val date: String?,
-    @ColumnInfo(name = "author")val author_id: String?
+    @ColumnInfo(name = "author")val author_id: String?,
+    @ColumnInfo(name = "firstName")val firstName: String?,
+    @ColumnInfo(name = "lastName")val lastName: String?
 ) : Serializable

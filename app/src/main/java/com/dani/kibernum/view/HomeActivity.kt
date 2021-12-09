@@ -1,19 +1,15 @@
 package com.dani.kibernum.view
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import androidx.activity.viewModels
-import androidx.annotation.NonNull
 import com.dani.kibernum.R
-import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.view.adapter.FeedListAdapter
 import com.dani.kibernum.view.utils.action
 import com.dani.kibernum.view.utils.snack
@@ -24,17 +20,18 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.kibernum_activity_home.*
 import kotlinx.android.synthetic.main.kibernum_detail_activity.*
+import java.io.Serializable
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity(), FeedsCallback {
 
     private val rvAdapter: FeedListAdapter = FeedListAdapter(this)
     val viewModel: HomeViewModel by viewModels()
-    var favoriteFeeds : List<FavouriteFeeds> = emptyList()
+    var favoriteFeeds: List<FavouriteFeeds> = emptyList()
 
 
-    private val navigatemenu = BottomNavigationView.OnNavigationItemSelectedListener {
-            item ->
+
+    private val navigatemenu = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.home -> {
                 return@OnNavigationItemSelectedListener false
@@ -59,7 +56,8 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
         bringFavourites()
 
         val navigationBar = findViewById<BottomNavigationView>(
-            R.id.navigationmenu)
+            R.id.navigationmenu
+        )
         navigationBar.selectedItemId = R.id.home
         navigationBar.setOnNavigationItemSelectedListener(navigatemenu)
 
@@ -70,12 +68,12 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
     }
 
     private fun bringFeeds() {
-        viewModel.getAllRepositoryList().observe(this,::onResponse)
-        viewModel.getAllContactsList().observe(this,::onResponseC)
+        viewModel.getAllRepositoryList().observe(this, ::onResponse)
+        viewModel.getAllContactsList().observe(this, ::onResponseC)
     }
 
     private fun onResponse(resource: AppResource<List<FeedsItem>>) {
-        when(resource) {
+        when (resource) {
             is AppResource.Error -> showMessage(resource.message)
             is AppResource.Loading -> showLoading()
             is AppResource.Success -> showFeeds(resource.data)
@@ -83,9 +81,8 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
     }
 
 
-
     private fun onResponseC(resource: AppResource<List<ContactsItem>>) {
-        when(resource) {
+        when (resource) {
             is AppResource.Error -> showMessage(resource.message)
             is AppResource.Loading -> showLoading()
             is AppResource.Success -> hideLoading()
@@ -98,8 +95,6 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
             rvAdapter.submitList(it)
         }
     }
-
-
 
     private fun showLoading() {
         homeProgressBar.visibility = View.VISIBLE
@@ -121,34 +116,44 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
 
     override fun onFeedClicked(feed: FeedsItem) {
         val isfav = favouriteChecker(feed.id)
+        val contactsAndFeeds = getContactsAndFeeds(feed.author_id!!)
+
+
         startActivity(Intent(this, DetailActivity::class.java).apply {
-            putExtra("feed", feed).putExtra("isFavourite", isfav)
+            putExtra("feed", feed).putExtra("isFavourite", isfav).
+            putExtra("array", contactsAndFeeds as Serializable)
         })
         finish()
     }
+    //chequeo contactos
+
+    private fun getContactsAndFeeds(author: String) :List<ContactsAndFeeds> {
+        val contacts = viewModel.getContactsAndFeeds(author)
+        return contacts}
+
 
     //chequeo favoritos
 
-    private fun bringFavourites(){
-        viewModel.getAllFavouritesList().observe(this,::onResponseF)
+    private fun bringFavourites() {
+        viewModel.getAllFavouritesList().observe(this, ::onResponseF)
     }
 
-    private fun onResponseF(resource : AppResource<List<FavouriteFeeds>>){
-        when(resource) {
+    private fun onResponseF(resource: AppResource<List<FavouriteFeeds>>) {
+        when (resource) {
             is AppResource.Error -> showMessage(resource.message)
             is AppResource.Loading -> showLoading()
             is AppResource.Success -> resource.data?.let { showFavs(it) }
         }
     }
 
-    private fun showFavs(data : List<FavouriteFeeds>){
+    private fun showFavs(data: List<FavouriteFeeds>) {
 
         favoriteFeeds = data
 
     }
 
-    fun favouriteChecker(id: Int?):Boolean{
-        var isFavourite : Boolean = false
+    fun favouriteChecker(id: Int?): Boolean {
+        var isFavourite: Boolean = false
         favoriteFeeds.forEach { favoriteFeeds ->
             when (id) {
                 favoriteFeeds.id -> isFavourite = true
@@ -158,17 +163,11 @@ class HomeActivity : AppCompatActivity(), FeedsCallback {
     }
 
 
-
 }
-
-
 
 interface FeedsCallback {
     fun onFeedClicked(feed: FeedsItem): Unit
-}
 
-/*interface FavoriteFeed {
-    fun onFavClicked(feed : FeedsItem): Unit
-}*/
+}
 
 

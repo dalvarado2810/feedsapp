@@ -9,8 +9,8 @@ import java.io.Serializable
 
 @Entity(tableName = "contacts")
 data class ContactsItem (
-        @PrimaryKey (autoGenerate = false) @ColumnInfo (name = "author")val id : Int,
-        @ColumnInfo (name = "firstName") val firstName : String,
-        @ColumnInfo (name = "lastName")val lastName : String,
-        @ColumnInfo (name = "gender")val gender : String
+        @PrimaryKey (autoGenerate = false) @ColumnInfo (name = "id_author")val id : Int?,
+        @ColumnInfo (name = "firstName") val firstName : String?,
+        @ColumnInfo (name = "lastName")val lastName : String?,
+        @ColumnInfo (name = "gender")val gender : String?
         ): Serializable

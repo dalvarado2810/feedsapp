@@ -62,7 +62,6 @@ class AppModule {
     fun getAppDao(appDatabase: AppDatabase): AppDao = appDatabase.getAppDao()
 
     @Provides
-    @Singleton
     fun getContactDao(appDatabase: AppDatabase): ContactsDao = appDatabase.getContactDao()
 
     @Provides
@@ -84,8 +83,8 @@ class AppModule {
 
     @Provides
     fun provideFavoriteRepository(remoteApiSource: RemoteApiSource,
-        sharedPreferences: MyPreference, favDao: FavDao):
+        sharedPreferences: MyPreference, favDao: FavDao, contactsDao: ContactsDao):
             FavoriteRepository =
-            FavoriteRepository(remoteApiSource, sharedPreferences, favDao)
+            FavoriteRepository(remoteApiSource, sharedPreferences, favDao, contactsDao)
 
 }

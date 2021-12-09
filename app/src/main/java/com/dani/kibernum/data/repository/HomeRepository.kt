@@ -6,6 +6,7 @@ import com.dani.kibernum.data.db.FavDao
 import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FavouriteFeeds
 import com.dani.kibernum.data.model.FeedsItem
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.data.repository.source.MyPreference
 import com.dani.kibernum.data.repository.source.RemoteApiSource
 import com.dani.kibernum.viewmodel.AppResource
@@ -28,7 +29,7 @@ class HomeRepository  @Inject constructor(
             val response = call.execute()
             return if (response.isSuccessful) {
                 val feedsList = response.body()
-                appDao.deleteAllRecords()
+
                 feedsList?.let {
                     it.forEach { feed ->
                         insertRecord(feed)
@@ -68,8 +69,6 @@ class HomeRepository  @Inject constructor(
         }
     }
 
-
-
     private fun getFallbackData(): AppResource<List<FeedsItem>> {
 
         val feeds = appDao.getAllRecords()
@@ -77,7 +76,7 @@ class HomeRepository  @Inject constructor(
         return if (feeds.isNotEmpty()) {
             AppResource.Success(feeds)
         } else {
-            AppResource.Error(message = "Network Error  X")
+            AppResource.Error(message = "feeds not Available")
         }
     }
 
@@ -96,7 +95,7 @@ class HomeRepository  @Inject constructor(
          return if (contacts.isNotEmpty()) {
                 AppResource.Success(contacts)
          } else {
-                AppResource.Error(message = "Network Error data")
+                AppResource.Error(message = "Contacts not Available")
          }
     }
 
@@ -109,6 +108,10 @@ class HomeRepository  @Inject constructor(
         } else {
             AppResource.Error(message = "There´s no Favourites")
         }
+    }
+
+    fun getContactsAndFeeds(author: String): List<ContactsAndFeeds> {
+        return contactsDao.getContactsAndFeeds(author)
     }
 
 }

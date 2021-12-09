@@ -104,20 +104,6 @@ class FavoriteActivity : AppCompatActivity() {
             is AppResource.Success -> showFavourites(resource.data)
         }
     }
-
-
-    fun favouriteChecker(id: Int?):Boolean{
-        var isFavourite : Boolean = false
-        favoriteFeeds.forEach { favoriteFeeds ->
-            when (id) {
-                favoriteFeeds.id -> isFavourite = true
-            }
-        }
-        return isFavourite
-    }
-
-
-
 }
 
 

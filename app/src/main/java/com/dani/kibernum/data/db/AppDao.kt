@@ -16,7 +16,7 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertRecord(feedsItem: FeedsItem)
 
-    @Query("DELETE FROM feeds")
+    @Query("DELETE  FROM feeds")
     fun deleteAllRecords()
 
 

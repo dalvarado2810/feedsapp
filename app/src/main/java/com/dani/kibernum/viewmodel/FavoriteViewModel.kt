@@ -10,6 +10,7 @@ import com.dani.kibernum.data.db.AppDao
 import com.dani.kibernum.data.db.AppDatabase
 import com.dani.kibernum.data.db.FavDao
 import com.dani.kibernum.data.model.*
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.data.repository.FavoriteRepository
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,6 +56,8 @@ class FavoriteViewModel @Inject constructor(
         }
 
     }
+
+
 
 
 

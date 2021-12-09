@@ -12,6 +12,7 @@ import coil.load
 import com.dani.kibernum.R
 import com.dani.kibernum.data.db.ContactsDao
 import com.dani.kibernum.data.model.*
+import com.dani.kibernum.data.model.relations.ContactsAndFeeds
 import com.dani.kibernum.view.utils.action
 import com.dani.kibernum.view.utils.snack
 import com.dani.kibernum.viewmodel.AppResource
@@ -27,11 +28,14 @@ class DetailActivity: AppCompatActivity() {
     private val favoriteViewModel : FavoriteViewModel by viewModels()
     var favoriteFeeds : List<FavouriteFeeds> = emptyList()
     var isFav : Boolean = false
+    var contactsAndFeeds : List<ContactsAndFeeds> = emptyList()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.kibernum_detail_activity)
+
         initFav()
         initData()
 
@@ -42,64 +46,36 @@ class DetailActivity: AppCompatActivity() {
         startActivity(Intent(this,HomeActivity::class.java))
     }
 
-/*private fun bringFavourites(){
-
-        favoriteViewModel.getAllFavouritesList().observe(this,::onResponseF)
-    }
-
-    private fun onResponseF(resource : AppResource<List<FavouriteFeeds>>){
-        when(resource) {
-            is AppResource.Error -> showMessage(resource.message)
-            is AppResource.Loading -> showLoading()
-            is AppResource.Success -> resource.data?.let { showFavs(it) }
-        }
-    }
-
-    private fun showFavs(data : List<FavouriteFeeds>){
-
-        favoriteFeeds = data
-
-    }
-*/
 
     fun initFav(){
-        var isFavourite = intent.getSerializableExtra("isFavourite") as Boolean
+        val isFavourite = intent.getSerializableExtra("isFavourite") as Boolean
         isFav = isFavourite
         if (isFavourite) {
             favBtn.setImageResource(R.drawable.ic_favorite)
         }
     }
 
-    private fun initData() {
 
-        val feed = intent.getSerializableExtra("feed") as FeedsItem
-        tv_desc.text = Html.fromHtml(feed.description, Html.FROM_HTML_MODE_COMPACT)
-        tv_tittle.text = feed.title
-        iv1.load(feed.image){
+     fun initData() {
+         val feed = intent.getSerializableExtra("feed") as FeedsItem
+         val contact = intent.getSerializableExtra("array") as MutableList<ContactsAndFeeds>
+        tv_desc.text = Html.fromHtml(feed?.description, Html.FROM_HTML_MODE_COMPACT)
+        tv_tittle.text = feed?.title
+        iv1.load(feed?.image){
             crossfade(true)
             placeholder(R.drawable.image)
         }
-        tv_published.text = feed.published
-        tv_author.text = feed.author_id.toString()
+        tv_published.text = feed?.published
+        tv_author.text = "${contact[0].contacts.firstName} , ${contact[0].contacts.lastName}"
 
         favBtn.setOnClickListener {
 
-            favoriteViewModel.markAsFavourite(FavoriteDto(postid = feed.id)
+            favoriteViewModel.markAsFavourite(FavoriteDto(postid = feed?.id)
             ).observe(this, Observer(::handleResult))
 
         }
 
     }
-
-  //  fun favouriteChecker(id: Int?){
-    //    favoriteFeeds.forEachIndexed { index, favoriteFeeds ->
-      //      if (id == favoriteFeeds.id){
-        //        isFav = true
-          //  }else{
-            //    isFav = false
-            //}
-        //}
-    //}
 
     private fun handleResult(appResource: AppResource<FavoriteResponse?>) {
         hideLoading()
@@ -113,14 +89,16 @@ class DetailActivity: AppCompatActivity() {
 
     private fun favouriteResult(){
         val feeds = intent.getSerializableExtra("feed") as FeedsItem
-
+        val contact = intent.getSerializableExtra("array") as MutableList<ContactsAndFeeds>
         if (isFav){
             val favourite = FavouriteFeeds(feeds.id,
                 feeds.title,
                 feeds.description,
                 feeds.image,
                 feeds.date,
-                feeds.author_id)
+                feeds.author_id,
+                contact[0].contacts.firstName,
+                contact[0].contacts.lastName)
             favoriteViewModel.deleteFavs(favourite)
             isFav = false
 
@@ -131,7 +109,9 @@ class DetailActivity: AppCompatActivity() {
                 feeds.description,
                 feeds.image,
                 feeds.date,
-                feeds.author_id)
+                feeds.author_id,
+                contact[0].contacts.firstName,
+                contact[0].contacts.lastName)
             favoriteViewModel.insertFavs(favourites)
             favBtn.setImageResource(R.drawable.ic_favorite)
             isFav = true

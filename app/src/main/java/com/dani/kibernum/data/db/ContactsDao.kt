@@ -4,6 +4,7 @@ import androidx.room.*
 import com.dani.kibernum.data.model.ContactsItem
 import com.dani.kibernum.data.model.FeedsItem
 import com.dani.kibernum.data.model.relations.ContactsAndFeeds
+import com.dani.kibernum.viewmodel.AppResource
 
 @Dao
 interface ContactsDao {
@@ -18,7 +19,7 @@ interface ContactsDao {
     fun deleteAllContacts()
 
     @Transaction
-    @Query("SELECT * FROM contacts WHERE author = :author")
-    fun getContactsAndFeeds(author : String): List<ContactsItem>
+    @Query("SELECT * FROM contacts WHERE id_author = :author")
+    fun getContactsAndFeeds(author : String): List<ContactsAndFeeds>
 
 }
